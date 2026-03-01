@@ -1,11 +1,11 @@
 {
-  "name": "PM - Productivity Manager",
-  "short_name": "PM",
+  "name": "DG - Productivity Manager",
+  "short_name": "DG",
   "description": "Quản lý năng suất và tiến độ dự án hiệu quả",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#10b981",
+  "background_color": "#ffffff",
+  "theme_color": "#dc2626",
   "orientation": "portrait-primary",
   "icons": [
     {
