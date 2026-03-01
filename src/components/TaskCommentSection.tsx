@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Trash2, MessageSquare, AtSign, Hash } from 'lucide-react';
+import { X, Send, Trash2, Pencil, Check, MessageSquare, AtSign, Hash } from 'lucide-react';
 import { db } from '../lib/firebase';
 import {
   collection,
   query,
   where,
-  orderBy,
   onSnapshot,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc,
   serverTimestamp,
   Timestamp,
@@ -70,6 +70,8 @@ export const TaskCommentSection: React.FC<Props> = ({ taskId, taskName, onClose 
   const [mentionQuery, setMentionQuery] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<{ username: string; displayName: string }[]>([]);
   const [projectMentionQuery, setProjectMentionQuery] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
   const projectNames = useProjectNames();
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -85,10 +87,15 @@ export const TaskCommentSection: React.FC<Props> = ({ taskId, taskName, onClose 
     const q = query(
       collection(db, 'task_comments'),
       where('task_id', '==', taskId),
-      orderBy('createdAt', 'asc'),
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setComments(snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as TaskComment)));
+      const docs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as TaskComment));
+      docs.sort((a, b) => {
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return a.createdAt.toMillis() - b.createdAt.toMillis();
+      });
+      setComments(docs);
     });
     return () => unsubscribe();
   }, [taskId]);
@@ -206,6 +213,24 @@ export const TaskCommentSection: React.FC<Props> = ({ taskId, taskName, onClose 
     }
   };
 
+  const handleEditStart = (commentId: string, text: string) => {
+    setEditingId(commentId);
+    setEditText(text);
+  };
+
+  const handleEditSave = async (commentId: string) => {
+    const text = editText.trim();
+    if (!text || !db) return;
+    try {
+      await updateDoc(doc(db, 'task_comments', commentId), { text });
+      setEditingId(null);
+      setEditText('');
+    } catch (err) {
+      console.error('Edit error:', err);
+      setSendError('Chỉnh sửa bình luận thất bại.');
+    }
+  };
+
   const formatTime = (ts: Timestamp | null) => {
     if (!ts) return '';
     const d = ts.toDate();
@@ -254,6 +279,7 @@ export const TaskCommentSection: React.FC<Props> = ({ taskId, taskName, onClose 
           )}
           {comments.map((comment) => {
             const isMe = comment.username === currentUser?.username;
+            const isEditing = editingId === comment.id;
             return (
               <div key={comment.id} className={`flex gap-2 group ${isMe ? 'flex-row-reverse' : ''}`}>
                 <div
@@ -270,24 +296,63 @@ export const TaskCommentSection: React.FC<Props> = ({ taskId, taskName, onClose 
                     )}
                     <span className="text-[10px] text-slate-400">{formatTime(comment.createdAt)}</span>
                     {canDelete(comment) && (
-                      <button
-                        onClick={() => handleDelete(comment.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-rose-50 text-slate-300 hover:text-rose-500"
-                        title="Xóa bình luận"
-                      >
-                        <Trash2 size={11} />
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleEditStart(comment.id, comment.text)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-blue-50 text-slate-300 hover:text-blue-500"
+                          title="Chỉnh sửa bình luận"
+                        >
+                          <Pencil size={11} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(comment.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-rose-50 text-slate-300 hover:text-rose-500"
+                          title="Xóa bình luận"
+                        >
+                          <Trash2 size={11} />
+                        </button>
+                      </>
                     )}
                   </div>
-                  <div
-                    className={`px-3 py-2 rounded-2xl text-sm break-words ${
-                      isMe
-                        ? 'bg-emerald-500 text-white rounded-tr-sm'
-                        : 'bg-slate-100 text-slate-800 rounded-tl-sm'
-                    }`}
-                  >
-                    {renderTextWithMentions(comment.text, currentUser?.username)}
-                  </div>
+                  {isEditing ? (
+                    <div className="flex gap-1 items-end">
+                      <textarea
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleEditSave(comment.id);
+                          }
+                          if (e.key === 'Escape') {
+                            setEditingId(null);
+                            setEditText('');
+                          }
+                        }}
+                        rows={1}
+                        className="flex-1 min-w-0 px-2 py-1.5 bg-white border border-blue-400 rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none text-sm resize-none overflow-hidden"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => handleEditSave(comment.id)}
+                        disabled={!editText.trim()}
+                        className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 disabled:bg-slate-200 disabled:text-slate-400 text-white p-1.5 rounded-lg transition-all active:scale-95 flex-shrink-0"
+                        title="Lưu"
+                      >
+                        <Check size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      className={`px-3 py-2 rounded-2xl text-sm break-words ${
+                        isMe
+                          ? 'bg-emerald-500 text-white rounded-tr-sm'
+                          : 'bg-slate-100 text-slate-800 rounded-tl-sm'
+                      }`}
+                    >
+                      {renderTextWithMentions(comment.text, currentUser?.username)}
+                    </div>
+                  )}
                 </div>
               </div>
             );
