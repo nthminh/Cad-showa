@@ -36,7 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
 
   const allMenuItems = [
     { id: 'tasks', label: 'Quản lý công việc', icon: ClipboardList, visible: true },
-    { id: 'engineers', label: 'Danh sách công ty', icon: Users, visible: perms.canViewEngineers },
+    { id: 'engineers', label: 'Danh sách nhân viên', icon: Users, visible: perms.canViewEngineers },
     { id: 'salary', label: 'Tính lương', icon: DollarSign, visible: perms.canViewSalary },
     { id: 'reports', label: 'Báo cáo', icon: BarChart3, visible: perms.canViewReports },
     { id: 'bulletin', label: 'Bảng tin', icon: Newspaper, visible: true },

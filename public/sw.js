@@ -19,15 +19,15 @@ self.addEventListener('fetch', () => {
 });
 
 // Handle badge updates from the page.
-// On Android, setAppBadge must be called from the service worker context,
-// so the page posts a message here and we forward it via self.navigator.
+// On Android, setAppBadge must be called from the service worker context.
+// The method is on the ServiceWorkerGlobalScope (self), not on self.navigator.
 self.addEventListener('message', (event) => {
   if (!event.data || event.data.type !== 'SET_BADGE') return;
-  if (!('setAppBadge' in self.navigator)) return;
+  if (!('setAppBadge' in self)) return;
   const count = event.data.count ?? 0;
   if (count > 0) {
-    self.navigator.setAppBadge(count).catch(() => {});
+    self.setAppBadge(count).catch(() => {});
   } else {
-    self.navigator.clearAppBadge().catch(() => {});
+    self.clearAppBadge().catch(() => {});
   }
 });
