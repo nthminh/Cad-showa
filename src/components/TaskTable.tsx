@@ -85,6 +85,11 @@ interface TaskTableProps {
   deadlineSoonTasks?: Task[];
 }
 
+function exportTimestamp() {
+  const now = new Date();
+  return `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
 function exportToCSV(tasks: Task[]) {
   const headers = [
     'Tên công việc', 'Thông tin công việc', 'Người phụ trách', 'Độ khó', 'Trạng thái', 'Hạn chót',
@@ -116,7 +121,7 @@ function exportToCSV(tasks: Task[]) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `cad-tasks-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = `congviec-${exportTimestamp()}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -191,7 +196,7 @@ async function exportToExcel(tasks: Task[]) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `cad-tasks-${new Date().toISOString().slice(0, 10)}.xlsx`;
+  link.download = `congviec-${exportTimestamp()}.xlsx`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
