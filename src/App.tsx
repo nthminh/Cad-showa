@@ -334,7 +334,7 @@ export default function App() {
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
                 {activeTab === 'tasks' ? 'Quản lý công việc' :
-                 activeTab === 'engineers' ? 'Danh sách công ty' :
+                 activeTab === 'engineers' ? 'Danh sách nhân viên' :
                  activeTab === 'salary' ? 'Tính lương' :
                  activeTab === 'chat' ? 'Chat nội bộ' :
                  activeTab === 'bulletin' ? 'Bảng tin' :

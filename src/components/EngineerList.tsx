@@ -95,7 +95,7 @@ const EngineerForm: React.FC<EngineerFormProps> = ({ initial, onClose, onSaved }
               <User className="text-white" size={20} />
             </div>
             <h2 className="font-bold text-slate-900 text-lg">
-              {initial?.id ? 'Chỉnh sửa kỹ sư' : 'Thêm kỹ sư mới'}
+              {initial?.id ? 'Chỉnh sửa nhân viên' : 'Thêm nhân viên mới'}
             </h2>
           </div>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-rose-500 transition-colors">
@@ -254,7 +254,7 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
 
   const handleDelete = async (engineer: Engineer) => {
     if (!db) return;
-    if (!window.confirm(`Bạn có chắc muốn xóa kỹ sư "${engineer.full_name}"?`)) return;
+    if (!window.confirm(`Bạn có chắc muốn xóa nhân viên "${engineer.full_name}"?`)) return;
     try {
       await deleteDoc(doc(db, 'engineers', engineer.id));
     } catch (err) {
@@ -331,8 +331,8 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">Danh sách kỹ sư</h3>
-          <p className="text-sm text-slate-500 mt-0.5">Quản lý thông tin các kỹ sư và nhân viên</p>
+          <h3 className="text-lg font-bold text-slate-900">Danh sách nhân viên</h3>
+          <p className="text-sm text-slate-500 mt-0.5">Quản lý thông tin nhân viên trong công ty</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
@@ -341,7 +341,7 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm kiếm kỹ sư..."
+              placeholder="Tìm kiếm nhân viên..."
               className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none w-56"
             />
           </div>
@@ -351,7 +351,7 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
               className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
             >
               <Plus size={18} />
-              Thêm kỹ sư
+              Thêm nhân viên
             </button>
           )}
         </div>
@@ -393,10 +393,10 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
                 <tr><td colSpan={ENG_COLUMNS.length} className="px-6 py-10 text-center text-slate-400 text-sm">Đang tải...</td></tr>
               )}
               {!loading && engineers.length === 0 && (
-                <tr><td colSpan={ENG_COLUMNS.length} className="px-6 py-10 text-center text-slate-400 text-sm">Chưa có kỹ sư nào. Nhấn "Thêm kỹ sư" để bắt đầu.</td></tr>
+                <tr><td colSpan={ENG_COLUMNS.length} className="px-6 py-10 text-center text-slate-400 text-sm">Chưa có nhân viên nào. Nhấn "Thêm nhân viên" để bắt đầu.</td></tr>
               )}
               {!loading && engineers.length > 0 && sorted.length === 0 && (
-                <tr><td colSpan={ENG_COLUMNS.length} className="px-6 py-10 text-center text-slate-400 text-sm">Không tìm thấy kỹ sư phù hợp.</td></tr>
+                <tr><td colSpan={ENG_COLUMNS.length} className="px-6 py-10 text-center text-slate-400 text-sm">Không tìm thấy nhân viên phù hợp.</td></tr>
               )}
               {!loading && sorted.map(eng => (
                 <tr key={eng.id} className="hover:bg-slate-50/50 transition-colors">
