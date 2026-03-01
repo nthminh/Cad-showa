@@ -2,8 +2,10 @@ import React from 'react';
 import { ClipboardList, X, Users, DollarSign, BarChart3, LogOut, MessageCircle, Newspaper, Settings, CalendarDays, Network } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { type UserRole, getPermissions, ROLE_LABELS } from '../lib/permissions';
+import { type UserRole, getPermissions } from '../lib/permissions';
 import { logout } from '../lib/auth';
+import { useLanguage } from '../lib/LanguageContext';
+import { LANGUAGES, type Language } from '../lib/i18n';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,20 +35,28 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMobileMenuOpen, setIsMobileMenuOpen, userRole, onLogout, mentionCount = 0, taskMentionCount = 0, bulletinMentionCount = 0, calendarMentionCount = 0, deadlineSoonCount = 0, appUser }) => {
   const perms = getPermissions(userRole);
+  const { t, language, setLanguage } = useLanguage();
 
   const allMenuItems = [
-    { id: 'tasks', label: 'Quản lý công việc', icon: ClipboardList, visible: true },
-    { id: 'engineers', label: 'Danh sách nhân viên', icon: Users, visible: perms.canViewEngineers },
-    { id: 'salary', label: 'Tính lương', icon: DollarSign, visible: perms.canViewSalary },
-    { id: 'reports', label: 'Báo cáo', icon: BarChart3, visible: perms.canViewReports },
-    { id: 'bulletin', label: 'Bảng tin', icon: Newspaper, visible: true },
-    { id: 'chat', label: 'Chat nội bộ', icon: MessageCircle, visible: true },
-    { id: 'calendar', label: 'Lịch nội bộ', icon: CalendarDays, visible: true },
-    { id: 'orgchart', label: 'Sơ đồ phòng ban', icon: Network, visible: true },
-    { id: 'settings', label: 'Cài đặt', icon: Settings, visible: perms.canViewSettings },
+    { id: 'tasks', labelKey: 'nav_tasks' as const, icon: ClipboardList, visible: true },
+    { id: 'engineers', labelKey: 'nav_engineers' as const, icon: Users, visible: perms.canViewEngineers },
+    { id: 'salary', labelKey: 'nav_salary' as const, icon: DollarSign, visible: perms.canViewSalary },
+    { id: 'reports', labelKey: 'nav_reports' as const, icon: BarChart3, visible: perms.canViewReports },
+    { id: 'bulletin', labelKey: 'nav_bulletin' as const, icon: Newspaper, visible: true },
+    { id: 'chat', labelKey: 'nav_chat' as const, icon: MessageCircle, visible: true },
+    { id: 'calendar', labelKey: 'nav_calendar' as const, icon: CalendarDays, visible: true },
+    { id: 'orgchart', labelKey: 'nav_orgchart' as const, icon: Network, visible: true },
+    { id: 'settings', labelKey: 'nav_settings' as const, icon: Settings, visible: perms.canViewSettings },
   ];
 
   const menuItems = allMenuItems.filter((item) => item.visible);
+
+  const roleLabels: Record<UserRole, string> = {
+    admin: t('role_admin'),
+    manager: t('role_manager'),
+    engineer: t('role_engineer'),
+    employee: t('role_employee'),
+  };
 
   return (
     <>
@@ -67,10 +77,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
       >
         <div className="p-6 flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <svg width="40" height="40" viewBox="0 0 40 40" className="rounded-lg flex-shrink-0" role="img" aria-label="DG Logo">
-              <rect width="40" height="40" rx="8" fill="white" />
-              <text x="2" y="30" fontFamily="Arial Black, sans-serif" fontSize="28" fontWeight="900" fill="#dc2626">D</text>
-              <text x="16" y="30" fontFamily="Arial Black, sans-serif" fontSize="28" fontWeight="900" fill="#111827">G</text>
+            <svg width="40" height="40" viewBox="0 0 512 512" className="rounded-lg flex-shrink-0" role="img" aria-label="Vietnamese Flag">
+              <rect width="512" height="512" rx="102" fill="#DA251D"/>
+              <polygon
+                points="256,141 281.9,220.4 365.4,220.5 297.8,269.6 323.6,349 256,300 188.4,349 214.2,269.6 146.6,220.5 230.1,220.4"
+                fill="#FFCD00"
+              />
             </svg>
             <div>
               <h1 className="text-white font-bold text-lg leading-tight">DG</h1>
@@ -104,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
                   activeTab === item.id ? "text-emerald-400" : "text-slate-500 group-hover:text-slate-300"
                 )} 
               />
-              <span className="flex-1 text-left">{item.label}</span>
+              <span className="flex-1 text-left">{t(item.labelKey)}</span>
               {item.id === 'chat' && mentionCount > 0 && (
                 <span className="min-w-[20px] h-5 flex items-center justify-center bg-rose-500 text-white text-xs font-bold rounded-full px-1.5">
                   {mentionCount > 99 ? '99+' : mentionCount}
@@ -148,16 +160,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-white leading-tight truncate">{appUser.displayName}</p>
-                <p className="text-xs text-slate-400 leading-tight">{ROLE_LABELS[appUser.role]}</p>
+                <p className="text-xs text-slate-400 leading-tight">{roleLabels[appUser.role]}</p>
               </div>
             </div>
           )}
+          {/* Language switcher */}
+          <div className="flex items-center gap-1 px-3 py-2 mb-1">
+            {(Object.entries(LANGUAGES) as [Language, { label: string; flag: string }][]).map(([code, info]) => (
+              <button
+                key={code}
+                onClick={() => setLanguage(code)}
+                title={info.label}
+                className={cn(
+                  'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all',
+                  language === code
+                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+                    : 'text-slate-500 hover:bg-slate-800 hover:text-slate-300',
+                )}
+              >
+                <span>{info.flag}</span>
+                <span className="hidden sm:inline">{code.toUpperCase()}</span>
+              </button>
+            ))}
+          </div>
           <button
             onClick={() => { logout(); onLogout(); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-slate-800 hover:text-white text-slate-400 group"
           >
             <LogOut size={20} className="text-slate-500 group-hover:text-slate-300 transition-colors" />
-            Đăng xuất
+            {t('nav_logout')}
           </button>
         </div>
       </aside>

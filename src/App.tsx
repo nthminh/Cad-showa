@@ -46,9 +46,11 @@ import { db, isFirebaseConfigured } from './lib/firebase';
 import { collection, query, orderBy, onSnapshot, where, Timestamp, doc, updateDoc } from 'firebase/firestore';
 import { Task, Engineer } from './types/database.types';
 import { isAuthenticated, getCurrentUser, logout } from './lib/auth';
-import { type UserRole, getPermissions, ROLE_LABELS } from './lib/permissions';
+import { type UserRole, getPermissions } from './lib/permissions';
+import { useLanguage } from './lib/LanguageContext';
 
 export default function App() {
+  const { t } = useLanguage();
   const [authenticated, setAuthenticated] = useState(isAuthenticated());
   const [appUser, setAppUser] = useState(getCurrentUser());
   const [activeTab, setActiveTab] = useState('tasks');
@@ -334,34 +336,34 @@ export default function App() {
             </button>
             <div>
               <h2 className="text-xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                {activeTab === 'tasks' ? 'Quản lý công việc' :
-                 activeTab === 'engineers' ? 'Danh sách nhân viên' :
-                 activeTab === 'salary' ? 'Tính lương' :
-                 activeTab === 'chat' ? 'Chat nội bộ' :
-                 activeTab === 'bulletin' ? 'Bảng tin' :
-                 activeTab === 'calendar' ? 'Lịch nội bộ' :
-                 activeTab === 'orgchart' ? 'Sơ đồ phòng ban' :
-                 activeTab === 'settings' ? 'Cài đặt' :
-                 'Báo cáo'}
+                {activeTab === 'tasks' ? t('header_tasks') :
+                 activeTab === 'engineers' ? t('header_engineers') :
+                 activeTab === 'salary' ? t('header_salary') :
+                 activeTab === 'chat' ? t('header_chat') :
+                 activeTab === 'bulletin' ? t('header_bulletin') :
+                 activeTab === 'calendar' ? t('header_calendar') :
+                 activeTab === 'orgchart' ? t('header_orgchart') :
+                 activeTab === 'settings' ? t('header_settings') :
+                 t('header_reports')}
               </h2>
               <p className="text-slate-500 mt-1 text-xs lg:text-base hidden sm:block">
                 {activeTab === 'tasks'
-                  ? 'Danh sách chi tiết các công việc và tiến độ.'
+                  ? t('subtitle_tasks')
                   : activeTab === 'engineers'
-                  ? 'Quản lý thông tin công ty và nhân viên.'
+                  ? t('subtitle_engineers')
                   : activeTab === 'salary'
-                  ? 'Quản lý lương căn bản và lương theo công việc hoàn thành.'
+                  ? t('subtitle_salary')
                   : activeTab === 'chat'
-                  ? 'Nhắn tin và trao đổi với các thành viên trong nhóm.'
+                  ? t('subtitle_chat')
                   : activeTab === 'bulletin'
-                  ? 'Cập nhật tin tức và thông báo của công ty.'
+                  ? t('subtitle_bulletin')
                   : activeTab === 'calendar'
-                  ? 'Lịch nội bộ và các sự kiện quan trọng của đội.'
+                  ? t('subtitle_calendar')
                   : activeTab === 'orgchart'
-                  ? 'Cấu trúc tổ chức và nhân sự theo phòng ban.'
+                  ? t('subtitle_orgchart')
                   : activeTab === 'settings'
-                   ? 'Quản lý người dùng và phân quyền truy cập.'
-                   : 'Tổng quan và thống kê hiệu suất toàn đội.'}
+                   ? t('subtitle_settings')
+                   : t('subtitle_reports')}
               </p>
             </div>
           </div>
@@ -382,7 +384,7 @@ export default function App() {
                   </div>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-slate-700 leading-tight">{appUser.displayName}</p>
-                    <p className="text-xs text-slate-500 leading-tight">{ROLE_LABELS[role]}</p>
+                    <p className="text-xs text-slate-500 leading-tight">{({ admin: t('role_admin'), manager: t('role_manager'), engineer: t('role_engineer'), employee: t('role_employee') })[role]}</p>
                   </div>
                 </button>
                 {showAvatarMenu && (
