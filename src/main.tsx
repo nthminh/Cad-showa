@@ -2,6 +2,7 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { LanguageProvider } from './lib/LanguageContext';
 
 const FIREBASE_CONFIG_KEY = 'firebase_config';
 
@@ -30,7 +31,9 @@ if ('serviceWorker' in navigator) {
 preloadFirebaseConfig().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <App />
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
     </StrictMode>,
   );
 });

@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- White background with rounded corners, matching the sidebar DG logo style -->
-  <rect width="512" height="512" rx="102" fill="white"/>
-  <!-- Red "D" matching sidebar logo color #dc2626 -->
-  <text x="26" y="380" font-family="Arial Black, Arial, sans-serif" font-size="358" font-weight="900" fill="#dc2626">D</text>
-  <!-- Dark "G" matching sidebar logo color #111827 -->
-  <text x="202" y="380" font-family="Arial Black, Arial, sans-serif" font-size="358" font-weight="900" fill="#111827">G</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Vietnamese Flag">
+  <!-- Vietnamese flag: red background with yellow five-pointed star -->
+  <rect width="512" height="512" rx="102" fill="#DA251D"/>
+  <!-- Yellow five-pointed star centered at (256,256) -->
+  <polygon
+    points="256,141 281.9,220.4 365.4,220.5 297.8,269.6 323.6,349 256,300 188.4,349 214.2,269.6 146.6,220.5 230.1,220.4"
+    fill="#FFCD00"
+  />
 </svg>
