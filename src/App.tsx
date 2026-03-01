@@ -161,8 +161,14 @@ export default function App() {
     }
     // Relay to service worker so Android PWA can update the badge via
     // self.navigator.setAppBadge() in the service worker scope.
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({ type: 'SET_BADGE', count: totalBadge });
+    // Use navigator.serviceWorker.ready so we reach the active SW even when
+    // the controller reference is still null on the first page load.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          registration.active?.postMessage({ type: 'SET_BADGE', count: totalBadge });
+        })
+        .catch(() => {});
     }
   }, [mentionCount, taskMentionCount, bulletinMentionCount, calendarMentionCount, newChatMessageCount]);
 

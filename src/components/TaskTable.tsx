@@ -85,6 +85,17 @@ interface TaskTableProps {
   deadlineSoonTasks?: Task[];
 }
 
+// Flatten root tasks + their children so exports include sub-tasks
+function flattenTasksForExport(rootTasks: Task[], childTasksMap: Map<string, Task[]>): Task[] {
+  const result: Task[] = [];
+  for (const task of rootTasks) {
+    result.push(task);
+    const children = childTasksMap.get(task.id) ?? [];
+    result.push(...children);
+  }
+  return result;
+}
+
 function exportTimestamp() {
   const now = new Date();
   return `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
@@ -459,7 +470,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
               </button>
             )}
             <button
-              onClick={() => exportToCSV(filteredTasks)}
+              onClick={() => exportToCSV(flattenTasksForExport(filteredTasks, childTasksMap))}
               className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-sm font-medium transition-colors"
               title="Xuất CSV"
             >
@@ -467,7 +478,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
               <span className="hidden sm:inline">Xuất CSV</span>
             </button>
             <button
-              onClick={() => exportToExcel(filteredTasks).catch(err => console.error('Excel export failed:', err))}
+              onClick={() => exportToExcel(flattenTasksForExport(filteredTasks, childTasksMap)).catch(err => console.error('Excel export failed:', err))}
               className="flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white hover:bg-green-700 rounded-xl text-sm font-medium transition-colors"
               title="Xuất Excel"
             >
