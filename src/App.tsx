@@ -146,6 +146,18 @@ export default function App() {
     return () => unsub();
   }, [appUser?.username]);
 
+  // Update app icon badge count using the Web App Badging API
+  useEffect(() => {
+    const totalBadge = (mentionCount ?? 0) + (taskMentionCount ?? 0) + (bulletinMentionCount ?? 0) + (calendarMentionCount ?? 0) + (newChatMessageCount ?? 0);
+    if ('setAppBadge' in navigator) {
+      if (totalBadge > 0) {
+        navigator.setAppBadge(totalBadge).catch(() => {});
+      } else {
+        navigator.clearAppBadge().catch(() => {});
+      }
+    }
+  }, [mentionCount, taskMentionCount, bulletinMentionCount, calendarMentionCount, newChatMessageCount]);
+
   // When user navigates to chat, mark all messages as read
   useEffect(() => {
     if (activeTab === 'chat') {
