@@ -147,9 +147,10 @@ export default function App() {
   }, [appUser?.username]);
 
   // Update app icon badge count using the Web App Badging API.
-  // On Android, the badge API must be driven from the service worker context,
-  // so we post a SET_BADGE message to the active service worker in addition to
-  // calling navigator.setAppBadge() directly (which covers desktop browsers).
+  // On Android, the badge API must be driven from the service worker context
+  // (self.setAppBadge on ServiceWorkerGlobalScope), so we post a SET_BADGE
+  // message to the active service worker in addition to calling
+  // navigator.setAppBadge() directly (which covers desktop browsers).
   useEffect(() => {
     const totalBadge = (mentionCount ?? 0) + (taskMentionCount ?? 0) + (bulletinMentionCount ?? 0) + (calendarMentionCount ?? 0) + (newChatMessageCount ?? 0);
     if ('setAppBadge' in navigator) {
