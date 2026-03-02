@@ -1,9 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Vietnamese Flag">
-  <!-- Vietnamese flag: red background with yellow five-pointed star -->
-  <rect width="512" height="512" rx="102" fill="#DA251D"/>
-  <!-- Yellow five-pointed star centered at (256,256) -->
-  <polygon
-    points="256,141 281.9,220.4 365.4,220.5 297.8,269.6 323.6,349 256,300 188.4,349 214.2,269.6 146.6,220.5 230.1,220.4"
-    fill="#FFCD00"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Vietnamese and Japanese Flag">
+  <defs>
+    <clipPath id="rounded">
+      <rect width="512" height="512" rx="102"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <!-- Left half: Vietnamese flag (red background) -->
+    <rect x="0" y="0" width="256" height="512" fill="#DA251D"/>
+    <!-- Right half: Japanese flag (white background) -->
+    <rect x="256" y="0" width="256" height="512" fill="#FFFFFF"/>
+    <!-- Vietnamese yellow star centered in left half (128,256), scaled to fit -->
+    <polygon
+      points="128,198.5 140.95,238.2 182.7,238.25 148.9,262.8 161.8,302.5 128,278 94.2,302.5 107.1,262.8 73.3,238.25 115.05,238.2"
+      fill="#FFCD00"
+    />
+    <!-- Japanese red circle centered in right half (384,256) -->
+    <circle cx="384" cy="256" r="90" fill="#BC002D"/>
+  </g>
 </svg>
