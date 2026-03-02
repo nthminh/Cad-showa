@@ -514,7 +514,7 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
   const formatTime = (ts: Timestamp | null) => {
     if (!ts) return '';
     const d = ts.toDate();
-    return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
   };
 
   const role = currentUser?.role;

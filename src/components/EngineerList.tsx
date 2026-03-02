@@ -413,7 +413,7 @@ export const EngineerList: React.FC<{ canManage?: boolean }> = ({ canManage = tr
                   <td className="px-4 py-4 text-sm text-slate-600 truncate">
                     {eng.date_of_birth ? (() => {
                       const d = new Date(eng.date_of_birth);
-                      return isNaN(d.getTime()) ? <span className="text-slate-400 italic">Không hợp lệ</span> : d.toLocaleDateString('vi-VN');
+                      return isNaN(d.getTime()) ? <span className="text-slate-400 italic">Không hợp lệ</span> : d.toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
                     })() : <span className="text-slate-400 italic">Chưa có</span>}
                   </td>
                   <td className="px-4 py-4 truncate">

@@ -85,8 +85,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
               />
             </svg>
             <div>
-              <h1 className="text-white font-bold text-lg leading-tight">Showa</h1>
-              <p className="text-xs text-slate-500">Productivity Manager</p>
+              <h1 className="text-white font-bold text-lg leading-tight">showa-cad</h1>
+              <p className="text-xs text-slate-500">showa-cad</p>
             </div>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden text-slate-500 hover:text-white">
