@@ -318,7 +318,6 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
       setReplyTo(null);
       setMentionQuery(null);
       setProjectMentionQuery(null);
-      inputRef.current?.focus();
       // Fire-and-forget: create notifications + send emails
       void notifyMentions(mentions, msgRef.id, text);
     } catch (err) {
@@ -326,6 +325,7 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
       setSendError('Gửi tin nhắn thất bại. Vui lòng thử lại.');
     } finally {
       setSending(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -784,7 +784,7 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
                   if (e.key === 'Escape') { setMentionQuery(null); setProjectMentionQuery(null); setReplyTo(null); }
                 }}
                 placeholder="Nhập tin nhắn... (dùng @ để nhắc ai đó, # để nhắc công việc)"
-                disabled={!db || !currentUser || sending}
+                disabled={!db || !currentUser}
                 rows={1}
                 className="flex-1 min-w-0 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm resize-none overflow-hidden"
               />
