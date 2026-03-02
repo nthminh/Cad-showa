@@ -364,7 +364,7 @@ const EngineerPopup: React.FC<EngineerPopupProps> = ({ engineer, tasks, onClose 
                       <p className="text-sm font-medium text-slate-800 truncate">{t.drawing_name}</p>
                       {t.deadline && (
                         <p className="text-xs text-slate-400 mt-0.5">
-                          Hạn: {new Date(t.deadline).toLocaleDateString('vi-VN')}
+                          Hạn: {new Date(t.deadline).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
                         </p>
                       )}
                     </div>

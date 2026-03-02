@@ -118,7 +118,7 @@ function exportToCSV(tasks: Task[]) {
     t.actual_hours > 0 ? ((t.target_hours / t.actual_hours) * 100).toFixed(1) : '',
     t.cost ?? '',
     t.drive_link ?? '',
-    new Date(t.created_at).toLocaleDateString('vi-VN'),
+    new Date(t.created_at).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
   ]);
   const csvRows = [headers, ...rows]
     .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
@@ -141,7 +141,7 @@ function exportToCSV(tasks: Task[]) {
 
 async function exportToExcel(tasks: Task[]) {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'CAD Productivity Manager';
+  workbook.creator = 'showa-cad';
   workbook.created = new Date();
 
   const sheet = workbook.addWorksheet('Công việc CAD');
@@ -183,7 +183,7 @@ async function exportToExcel(tasks: Task[]) {
       productivity: productivity,
       cost: t.cost ?? '',
       drive_link: t.drive_link ?? '',
-      created_at: new Date(t.created_at).toLocaleDateString('vi-VN'),
+      created_at: new Date(t.created_at).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
     });
     row.alignment = { vertical: 'middle', wrapText: false };
     if (index % 2 === 1) {
@@ -413,7 +413,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
                 <span className="text-sm text-slate-800 font-medium truncate">{t.drawing_name}</span>
                 {t.deadline && (
                   <span className="text-xs text-orange-600 ml-1.5 font-medium">
-                    Hạn: {new Date(t.deadline).toLocaleDateString('vi-VN')}
+                    Hạn: {new Date(t.deadline).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
                   </span>
                 )}
               </div>
@@ -600,7 +600,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
                         ) : (
                           <span className="text-xs text-slate-400 italic">Chưa có</span>
                         )}
-                        <span className="text-xs text-slate-400">{new Date(t.created_at).toLocaleDateString('vi-VN')}</span>
+                        <span className="text-xs text-slate-400">{new Date(t.created_at).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</span>
                       </div>
                     </td>
                     <td className="px-4 md:px-6 py-4 text-sm text-slate-600 overflow-hidden whitespace-nowrap cursor-pointer" onClick={(e) => showCellTooltip(e, t.engineer_name)}>{t.engineer_name}</td>
@@ -628,7 +628,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
                               ? 'text-rose-600'
                               : 'text-slate-700'
                           }`}>
-                            {new Date(t.deadline).toLocaleDateString('vi-VN')}
+                            {new Date(t.deadline).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
                           </span>
                           {new Date(t.deadline) < new Date() && !isInactiveStatus(t.status) && (
                             <span className="text-[10px] text-rose-500 font-bold uppercase">Quá hạn</span>
@@ -798,7 +798,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
                         ) : (
                           <span className="text-xs text-slate-400 italic">Chưa có</span>
                         )}
-                        <span className="text-xs text-slate-400">{new Date(task.created_at).toLocaleDateString('vi-VN')}</span>
+                        <span className="text-xs text-slate-400">{new Date(task.created_at).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</span>
                       </div>
                     </td>
                     <td className="px-4 md:px-6 py-4 text-sm text-slate-600 overflow-hidden whitespace-nowrap cursor-pointer" onClick={(e) => showCellTooltip(e, task.engineer_name)}>{task.engineer_name}</td>
@@ -826,7 +826,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ tasks, onRefresh, onViewDr
                               ? 'text-rose-600'
                               : 'text-slate-700'
                           }`}>
-                            {new Date(task.deadline).toLocaleDateString('vi-VN')}
+                            {new Date(task.deadline).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}
                           </span>
                           {new Date(task.deadline) < new Date() && !isInactiveStatus(task.status) && (
                             <span className="text-[10px] text-rose-500 font-bold uppercase">Quá hạn</span>

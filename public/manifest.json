@@ -1,6 +1,6 @@
 {
-  "name": "DG - Productivity Manager",
-  "short_name": "DG",
+  "name": "showa-cad",
+  "short_name": "showa-cad",
   "description": "Quản lý năng suất và tiến độ dự án hiệu quả",
   "start_url": "/",
   "display": "standalone",
