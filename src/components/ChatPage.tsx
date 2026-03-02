@@ -318,6 +318,7 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
       setReplyTo(null);
       setMentionQuery(null);
       setProjectMentionQuery(null);
+      inputRef.current?.focus();
       // Fire-and-forget: create notifications + send emails
       void notifyMentions(mentions, msgRef.id, text);
     } catch (err) {
@@ -523,18 +524,7 @@ export const ChatPage: React.FC<{ onMentionCountChange?: (count: number) => void
   const noStorage = !storage;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      {/* Header */}
-      <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3 flex-shrink-0">
-        <div className="bg-emerald-500 p-2 rounded-lg">
-          <MessageCircle className="text-white" size={20} />
-        </div>
-        <div>
-          <h2 className="font-bold text-slate-900 text-base">Chat nội bộ</h2>
-          <p className="text-xs text-slate-500">Nhắn tin với các thành viên trong nhóm</p>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-[calc(100vh-76px)] bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Mention notifications banner */}
       {myMentions.length > 0 && (
         <div className="flex-shrink-0 border-b border-amber-200 bg-amber-50 px-4 py-3">
