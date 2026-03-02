@@ -85,13 +85,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
               />
             </svg>
             <div>
-              <h1 className="text-white font-bold text-lg leading-tight">DG</h1>
+              <h1 className="text-white font-bold text-lg leading-tight">Showa</h1>
               <p className="text-xs text-slate-500">Productivity Manager</p>
             </div>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden text-slate-500 hover:text-white">
             <X size={24} />
           </button>
+        </div>
+        {/* Language switcher at top */}
+        <div className="flex items-center gap-1 px-4 py-2 border-b border-slate-800">
+          {(Object.entries(LANGUAGES) as [Language, { label: string; flag: string }][]).map(([code, info]) => (
+            <button
+              key={code}
+              onClick={() => setLanguage(code)}
+              title={info.label}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all',
+                language === code
+                  ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+                  : 'text-slate-500 hover:bg-slate-800 hover:text-slate-300',
+              )}
+            >
+              <span>{info.flag}</span>
+              <span>{code.toUpperCase()}</span>
+            </button>
+          ))}
         </div>
 
         <nav className="flex-1 py-6 px-4 space-y-1">
@@ -164,25 +183,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isMob
               </div>
             </div>
           )}
-          {/* Language switcher */}
-          <div className="flex items-center gap-1 px-3 py-2 mb-1">
-            {(Object.entries(LANGUAGES) as [Language, { label: string; flag: string }][]).map(([code, info]) => (
-              <button
-                key={code}
-                onClick={() => setLanguage(code)}
-                title={info.label}
-                className={cn(
-                  'flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all',
-                  language === code
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
-                    : 'text-slate-500 hover:bg-slate-800 hover:text-slate-300',
-                )}
-              >
-                <span>{info.flag}</span>
-                <span className="hidden sm:inline">{code.toUpperCase()}</span>
-              </button>
-            ))}
-          </div>
           <button
             onClick={() => { logout(); onLogout(); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-slate-800 hover:text-white text-slate-400 group"
