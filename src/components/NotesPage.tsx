@@ -15,7 +15,6 @@ import {
 import {
   collection,
   query,
-  orderBy,
   onSnapshot,
   addDoc,
   deleteDoc,
@@ -486,14 +485,22 @@ const NotesPage: React.FC = () => {
     const q = query(
       collection(db, 'notes'),
       where('username', '==', username),
-      orderBy('isPinned', 'desc'),
-      orderBy('updatedAt', 'desc'),
     );
     const unsub = onSnapshot(q, (snap) => {
-      const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Note));
+      const data = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() } as Note))
+        .sort((a, b) => {
+          if (Boolean(a.isPinned) !== Boolean(b.isPinned)) return a.isPinned ? -1 : 1;
+          const aTime = a.updatedAt?.toMillis() ?? 0;
+          const bTime = b.updatedAt?.toMillis() ?? 0;
+          return bTime - aTime;
+        });
       setNotes(data);
       setLoading(false);
-    }, () => setLoading(false));
+    }, (error) => {
+      console.error('Lỗi tải ghi chú:', error);
+      setLoading(false);
+    });
     return () => unsub();
   }, [username]);
 
