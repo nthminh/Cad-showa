@@ -42,6 +42,7 @@ import { LoginGate } from './components/LoginGate';
 import { SettingsPage } from './components/SettingsPage';
 import { InternalCalendarPage } from './components/InternalCalendarPage';
 import { OrgChartPage } from './components/OrgChartPage';
+import NotesPage from './components/NotesPage';
 import { db, isFirebaseConfigured } from './lib/firebase';
 import { collection, query, orderBy, onSnapshot, where, Timestamp, doc, updateDoc } from 'firebase/firestore';
 import { Task, Engineer } from './types/database.types';
@@ -343,6 +344,7 @@ export default function App() {
                  activeTab === 'bulletin' ? t('header_bulletin') :
                  activeTab === 'calendar' ? t('header_calendar') :
                  activeTab === 'orgchart' ? t('header_orgchart') :
+                 activeTab === 'notes' ? t('header_notes') :
                  activeTab === 'settings' ? t('header_settings') :
                  t('header_reports')}
               </h2>
@@ -361,6 +363,8 @@ export default function App() {
                   ? t('subtitle_calendar')
                   : activeTab === 'orgchart'
                   ? t('subtitle_orgchart')
+                  : activeTab === 'notes'
+                  ? t('subtitle_notes')
                   : activeTab === 'settings'
                    ? t('subtitle_settings')
                    : t('subtitle_reports')}
@@ -518,6 +522,8 @@ export default function App() {
             />
           ) : activeTab === 'orgchart' ? (
             <OrgChartPage tasks={tasks} />
+          ) : activeTab === 'notes' ? (
+            <NotesPage />
           ) : activeTab === 'settings' && perms.canViewSettings ? (
             <SettingsPage />
           ) : (

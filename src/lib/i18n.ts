@@ -17,6 +17,7 @@ const translations = {
     nav_calendar: 'Lịch nội bộ',
     nav_orgchart: 'Sơ đồ phòng ban',
     nav_settings: 'Cài đặt',
+    nav_notes: 'Ghi chú',
     nav_logout: 'Đăng xuất',
 
     // Header titles
@@ -28,6 +29,7 @@ const translations = {
     header_calendar: 'Lịch nội bộ',
     header_orgchart: 'Sơ đồ phòng ban',
     header_settings: 'Cài đặt',
+    header_notes: 'Ghi chú',
     header_reports: 'Báo cáo',
 
     // Header subtitles
@@ -39,6 +41,7 @@ const translations = {
     subtitle_calendar: 'Lịch nội bộ và các sự kiện quan trọng của đội.',
     subtitle_orgchart: 'Cấu trúc tổ chức và nhân sự theo phòng ban.',
     subtitle_settings: 'Quản lý người dùng và phân quyền truy cập.',
+    subtitle_notes: 'Ghi chú cá nhân của bạn.',
     subtitle_reports: 'Tổng quan và thống kê hiệu suất toàn đội.',
 
     // Role labels
@@ -73,6 +76,7 @@ const translations = {
     nav_calendar: '社内カレンダー',
     nav_orgchart: '組織図',
     nav_settings: '設定',
+    nav_notes: 'メモ',
     nav_logout: 'ログアウト',
 
     // Header titles
@@ -84,6 +88,7 @@ const translations = {
     header_calendar: '社内カレンダー',
     header_orgchart: '組織図',
     header_settings: '設定',
+    header_notes: 'メモ',
     header_reports: 'レポート',
 
     // Header subtitles
@@ -95,6 +100,7 @@ const translations = {
     subtitle_calendar: '社内カレンダーとチームの重要なイベント。',
     subtitle_orgchart: '部門別の組織構造と人員。',
     subtitle_settings: 'ユーザー管理とアクセス権の設定。',
+    subtitle_notes: 'あなたの個人メモ。',
     subtitle_reports: 'チーム全体のパフォーマンスの概要と統計。',
 
     // Role labels
