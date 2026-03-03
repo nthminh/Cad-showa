@@ -225,6 +225,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
   const [videoInputVal, setVideoInputVal] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const cc = getColorConfig(color);
 
@@ -255,27 +256,29 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
   };
 
   const handleSave = async () => {
+    if (saving) return;
     const isEmpty = !title.trim() && !content.trim() && images.length === 0 && !videoUrl;
     if (isEmpty) {
-      // If editing an existing note with all fields cleared, delete it
-      if (note?.id && db) {
-        if (window.confirm('Ghi chú trống sẽ bị xóa. Tiếp tục?')) {
-          await deleteDoc(doc(db, 'notes', note.id));
-        }
-      }
       onClose();
       return;
     }
     setSaving(true);
-    await onSave({ title: title.trim(), content: content.trim(), images, videoUrl, color });
-    setSaving(false);
-    onClose();
+    setSaveError(null);
+    try {
+      await onSave({ title: title.trim(), content: content.trim(), images, videoUrl, color });
+      onClose();
+    } catch (err) {
+      console.error('Lỗi lưu ghi chú:', err);
+      setSaveError('Không thể lưu ghi chú. Vui lòng thử lại.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const ytId = getYouTubeId(videoUrl);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={handleSave}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
       <div
         className={`w-full max-w-lg rounded-2xl border shadow-2xl overflow-hidden ${cc.value} ${cc.border}`}
         onClick={(e) => e.stopPropagation()}
@@ -376,71 +379,79 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onClose }) => {
         )}
 
         {/* Toolbar */}
-        <div className={`flex items-center justify-between px-2 py-2 border-t ${cc.border}`}>
-          <div className="flex items-center gap-0.5">
-            {/* Image upload */}
-            <button
-              type="button"
-              title="Chèn ảnh"
-              onClick={() => imageInputRef.current?.click()}
-              disabled={uploading}
-              className="p-2 rounded-full text-slate-500 hover:bg-black/5 hover:text-slate-700 disabled:opacity-50"
-            >
-              {uploading ? (
-                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-              ) : (
-                <ImageIcon size={18} />
-              )}
-            </button>
-            <input ref={imageInputRef} type="file" accept="image/*" multiple hidden onChange={(e) => handleImageUpload(e.target.files)} />
-
-            {/* Video link */}
-            <button
-              type="button"
-              title="Chèn link video"
-              onClick={() => setShowVideoInput((v) => !v)}
-              className={`p-2 rounded-full hover:bg-black/5 hover:text-slate-700 ${showVideoInput ? 'text-blue-500' : 'text-slate-500'}`}
-            >
-              <Video size={18} />
-            </button>
-
-            {/* Color picker */}
-            <div className="relative">
+        <div className={`flex flex-col border-t ${cc.border}`}>
+          {saveError && (
+            <div role="alert" className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-700 text-xs">
+              <X size={12} className="flex-shrink-0" />
+              {saveError}
+            </div>
+          )}
+          <div className={`flex items-center justify-between px-2 py-2`}>
+            <div className="flex items-center gap-0.5">
+              {/* Image upload */}
               <button
                 type="button"
-                title="Màu sắc"
-                onClick={() => setShowColorPicker((v) => !v)}
-                className={`p-2 rounded-full hover:bg-black/5 hover:text-slate-700 ${showColorPicker ? 'text-emerald-500' : 'text-slate-500'}`}
+                title="Chèn ảnh"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={uploading}
+                className="p-2 rounded-full text-slate-500 hover:bg-black/5 hover:text-slate-700 disabled:opacity-50"
               >
-                <Palette size={18} />
+                {uploading ? (
+                  <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                ) : (
+                  <ImageIcon size={18} />
+                )}
               </button>
-              {showColorPicker && (
-                <div className={`absolute bottom-10 left-0 rounded-2xl border shadow-lg ${cc.value} ${cc.border} z-10`}>
-                  <ColorPicker current={color} onChange={(c) => { setColor(c); setShowColorPicker(false); }} />
-                </div>
-              )}
-            </div>
-          </div>
+              <input ref={imageInputRef} type="file" accept="image/*" multiple hidden onChange={(e) => handleImageUpload(e.target.files)} />
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-1.5 text-sm text-slate-600 hover:bg-black/5 rounded-lg"
-            >
-              Hủy
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="px-4 py-1.5 text-sm bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 disabled:opacity-60"
-            >
-              {saving ? 'Đang lưu...' : 'Lưu'}
-            </button>
+              {/* Video link */}
+              <button
+                type="button"
+                title="Chèn link video"
+                onClick={() => setShowVideoInput((v) => !v)}
+                className={`p-2 rounded-full hover:bg-black/5 hover:text-slate-700 ${showVideoInput ? 'text-blue-500' : 'text-slate-500'}`}
+              >
+                <Video size={18} />
+              </button>
+
+              {/* Color picker */}
+              <div className="relative">
+                <button
+                  type="button"
+                  title="Màu sắc"
+                  onClick={() => setShowColorPicker((v) => !v)}
+                  className={`p-2 rounded-full hover:bg-black/5 hover:text-slate-700 ${showColorPicker ? 'text-emerald-500' : 'text-slate-500'}`}
+                >
+                  <Palette size={18} />
+                </button>
+                {showColorPicker && (
+                  <div className={`absolute bottom-10 left-0 rounded-2xl border shadow-lg ${cc.value} ${cc.border} z-10`}>
+                    <ColorPicker current={color} onChange={(c) => { setColor(c); setShowColorPicker(false); }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-1.5 text-sm text-slate-600 hover:bg-black/5 rounded-lg"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-1.5 text-sm bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 disabled:opacity-60"
+              >
+                {saving ? 'Đang lưu...' : 'Lưu'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -475,6 +486,7 @@ const NotesPage: React.FC = () => {
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingNote, setEditingNote] = useState<Partial<Note> | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -497,8 +509,10 @@ const NotesPage: React.FC = () => {
         });
       setNotes(data);
       setLoading(false);
+      setLoadError(null);
     }, (error) => {
       console.error('Lỗi tải ghi chú:', error);
+      setLoadError('Không thể tải ghi chú. Vui lòng kiểm tra kết nối và thử lại.');
       setLoading(false);
     });
     return () => unsub();
@@ -515,7 +529,7 @@ const NotesPage: React.FC = () => {
   };
 
   const handleSave = async (data: Partial<Note>) => {
-    if (!db) return;
+    if (!db) throw new Error('Kết nối cơ sở dữ liệu không khả dụng.');
     if (editingNote?.id) {
       // Update existing
       await updateDoc(doc(db, 'notes', editingNote.id), {
@@ -582,6 +596,13 @@ const NotesPage: React.FC = () => {
 
       {/* Create note */}
       <InlineCreate onOpenEditor={openCreate} />
+
+      {loadError && (
+        <div role="alert" className="flex items-center gap-2 p-4 mb-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-sm">
+          <X size={16} className="flex-shrink-0" />
+          {loadError}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-slate-400">
